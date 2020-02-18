@@ -58,7 +58,7 @@ function ReportMinecraftServerStatus(msg, hostname) {
 
             // Parse response data into variables so it's easier to work with
             let isServerOnline = data.online;
-            let arePlayersOnline = (data.players.list ? true : false);
+            let arePlayersOnline = (data.players && data.players.list ? true : false);
 
             // Aggregate the server's status into a string so it can be posted in the Discord chat
             let reply = 'Server: ' + hostname;
