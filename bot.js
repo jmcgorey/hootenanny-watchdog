@@ -27,11 +27,45 @@ client.on('ready', () => {
 // Event listener for user posting a message
 client.on('message', msg => {
     // This function runs when any user posts a message in the chat (including this or another bot)
+    
+    if (msg.content === '!help') {
+        DisplayHelp(msg);
+    }
+
+    if (!msg.content.includes('!po3')) return; // Don't process any messages w/o the command prefix
+
     if (msg.content === '!po3 status') {
         ReportMinecraftServerStatus(msg, process.env.PO3_SERVER_HOSTNAME);
     }
+    if (msg.content === '!po3 start server') {
+        StartMinecraftServer(msg);
+    }
+    if (msg.content === '!po3 stop server') {
+        StopMinecraftServer(msg);
+    }
     // TODO Implement command w/ arguments pattern found here: https://discordjs.guide/creating-your-bot/commands-with-user-input.html#basic-arguments 
 });
+
+function DisplayHelp(msg) {
+    /*
+    Function:   DisplayHelp
+    Purpose:    Prints a help message containing a list of commands that are available to channel members to use.
+    
+    Inputs:     msg - The Message object from the user's command input
+
+    Output:     The user who entered the command is replied to with the help message.
+
+    */
+    // Construct a reply with a help message
+    let reply = 'Commands: \n';
+    reply += '!help - Prints this message.\n'
+    reply += '!po3 status - Checks the status of the PO3 Minecraft Server to see if it is running.  If anyone is playing, it also lists their usernames.\n';
+    reply += '!po3 start server - Starts the PO3 Minecraft Server if it is not already running.\n';
+    reply += '!po3 stop server - Stops the PO3 Minecraft Server if it is running.  Please use !po3 status to check if anyone is playing before you do this.';
+
+    // Reply to the user who made the help command
+    msg.reply(reply);
+}
 
 
 function ReportMinecraftServerStatus(msg, hostname) {
@@ -81,6 +115,66 @@ function ReportMinecraftServerStatus(msg, hostname) {
             msg.channel.send(reply);
         })
         .catch(err => console.error(err)); // Log any errors from this promise chain
+}
+
+function StartMinecraftServer(msg) {
+    /*  
+    Function:   StartMinecraftServer
+    Purpose:    Send an GET request to the START_SERVER_ENDPOINT to start the server.
+                Logs the username of who made the request & replies to them in chat.
+    
+    Inputs:     msg - The Message object from the user's command input
+
+    Output:     The Minecraft server is started and a message is printed in Discord chat
+                to notify the user who made the request.
+    */
+
+
+    // Configure the API Request to start the server
+    let url = process.env.START_SERVER_ENDPOINT;
+    let headers = {
+        "x-api-key": process.env.SERVER_MGMT_API_KEY
+    };
+
+    // Send the API request
+    fetch(url, {method: 'GET', headers: headers})
+    .then((response) => response.json())
+    .then(data => {
+        // Log who started the server & reply to them in chat
+        console.log(msg.author.username + ' has started the server!');
+        msg.reply('Starting server... Use !po3 status in a few minutes to see if the server is running.');
+    })
+    .catch(err => console.error(err)); // Log any errors from this promise chain
+}
+
+function StopMinecraftServer(msg) {
+    /*  
+    Function:   StopMinecraftServer
+    Purpose:    Send an GET request to the STOP_SERVER_ENDPOINT to stop the server.
+                Logs the username of who made the request & replies to them in chat.
+    
+    Inputs:     msg - The Message object from the user's command input
+
+    Output:     The Minecraft server is stopped and a message is printed in Discord chat
+                to notify the user who made the request.
+    */
+    // IDEA: Prevent stop if someone is currently playing on the server
+
+    // Configure the API Request to stop the server
+    let url = process.env.STOP_SERVER_ENDPOINT;
+    let headers = {
+        "x-api-key": process.env.SERVER_MGMT_API_KEY
+    };
+
+    // Send the API request
+    fetch(url, {method: 'GET', headers: headers})
+    .then((response) => response.json())
+    .then(data => {
+        // Log who started the server & reply to them in chat
+        console.log(msg.author.username + ' has stopped the server!');
+        msg.reply('Stopping server... Thanks for playing!');
+    })
+    .catch(err => console.error(err)); // Log any errors from this promise chain
 }
 
 // Initialize the bot by connecting to the server
