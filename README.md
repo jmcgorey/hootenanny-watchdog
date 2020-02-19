@@ -1,5 +1,5 @@
 # What is hootenanny-watchdog?
-```hootenanny-watchdog``` is a Discord bot that was put together to help my friends and I manage the status of our modded Minecraft server. It is able to query for the status of a Minecraft server using the [mcsrvstat.us API](https://api.mcsrvstat.us/) provided by Anders G. Jørgensen ([Spirit55555](https://github.com/Spirit55555)).  Future plans include being able to start and stop an AWS instance that is running a Minecraft server using commands in Discord chat.  It could also be expanded to manage other types of game servers as well.
+```hootenanny-watchdog``` is a Discord bot that was put together to help my friends and I manage the status of our modded Minecraft server. It is able to query for the status of a Minecraft server using the [mcsrvstat.us API](https://api.mcsrvstat.us/) provided by Anders G. Jørgensen ([Spirit55555](https://github.com/Spirit55555)).  It is also able to start and stop an AWS instance that is running a Minecraft server using commands in Discord chat.  It could also be expanded to manage other types of game servers as well.
 
 Please feel free to take this code and modify it for your purposes.
 
@@ -35,16 +35,33 @@ This will install the following Node packages:
 * dotenv - Used to allow for importing a configuration file
 * Fetch - Used to make web requests  
 
-Once you have done the above, place ```bot.js``` and ```.env``` from this repository into the directory that you made.  The ```bot.js``` file contains the functionality of the Discord bot, and the ```.env``` file contains a set of configuration values that are used to run the bot.  You will have to edit the ```.env``` file to meet your needs. It follows this structure:
+Once you have done the above, place the ```bot.js``` file from this repository into the directory that you made.  This file contains the functionality of the Discord bot. 
+
+## Creating Your Configuration File
+The Discord bot relies on a set of configuration values in order to run properly.  These are stored in a ```.env``` file in the same directory as ```bot.js```.  The dotenv node package will pull this configuration file into your script, but, fnfortunately, you will have to set up this file yourself.  
+
+Create the configuration file by entering the following command into your terminal:
 ```
---.env----------------------------------
-DISCORD_TOKEN= #YOUR DISCORD BOT TOKEN
-PO3_SERVER_HOSTNAME= #THE HOSTNAME OF YOUR MINECRAFT SERVER ex: play.myMinecraftServer.com
+nano .env
+```
+The bot in its current state requires a file with the following key/value pairs.  Feel free to copy this file and replace the comments with your own values.
+
+
+```
+DISCORD_TOKEN= # Your Discord Bot Token #
+PO3_SERVER_HOSTNAME= # Your Minecraft Server Hostname/IP #
+START_SERVER_ENDPOINT= # An API endpoint used to start the minecraft server #
+STOP_SERVER_ENDPOINT= # An API endpoint used to stop the minecraft server #
+SERVER_MGMT_API_KEY= # An API key used to access the two above endpoints #
 ```
 
 For details on how to obtains your Discord token, follow the "Generating Token Key" section of [this Medium article](https://medium.com/davao-js/2019-tutorial-creating-your-first-simple-discord-bot-47fc836a170b).  You will also want to connect your bot to a Discord server.  Instructions on how to do that can be found in that same Medium article.
 
-That's it!  Once you've placed your Discord Token and Server Hostname into the ```.env``` file, you should be able to run your bot by calling
+If you don't want to worry about the server endpoints and API key, remove the ```!po3 start server``` and ```!po3 stop server``` commands and their related functions from ```bot.js```.
+
+## Running the Bot
+
+That's it!  Once you've set up your ```.env``` file, you should be able to run your bot by calling
 ```
 node bot.js
 ```
@@ -57,5 +74,5 @@ The foundations of this project are built on [this tutorial](https://medium.com/
 Also, many thanks to Anders G. Jørgensen ([Spirit55555](https://github.com/Spirit55555)) for providing the mcsrvstat.us API.  It made it very easy to get all of the information I needed about my Minecraft server.
 
 
-Thanks to everyone to this project:
+Thanks to everyone for your contributions to this project:
 * John McGorey
